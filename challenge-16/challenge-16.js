@@ -36,8 +36,8 @@
 	console.log( '\nNome em slug:' );
 	var fullName = 'myron-jorge-rodrigues-rezzo';
 	console.log( fullName );
-	fullName = fullName.split('-').map( function(item, index) {
-		return item.slice(0,1).toUpperCase() + item.slice(1);
+	fullName = fullName.split('-').map( function(item) {
+		return item.charAt(0).toUpperCase() + item.slice(1);
 	}).join(' ');
 	console.log( '\nNome convertido a partir de um slug:' );
 	console.log( fullName );
@@ -53,9 +53,16 @@
 	*/
 	console.log( '\nMeus amigos:' );
 	var nomesAmigos = ['Fernando', 'Denis', 'Adeirlan', 'Tiago', 'Rafael', 'Higor', 'David'];
-	nomesAmigos = nomesAmigos.join(', ');
-	nomesAmigos = nomesAmigos.slice(0, nomesAmigos.lastIndexOf(',')) + nomesAmigos.slice(nomesAmigos.lastIndexOf(',')).replace(', ', ' e ');
-	console.log( nomesAmigos + ' são meus amigos.' );
+	// Minha solução
+	// nomesAmigos = nomesAmigos.join(', ');
+	// nomesAmigos = nomesAmigos.slice(0, nomesAmigos.lastIndexOf(',')) + nomesAmigos.slice(nomesAmigos.lastIndexOf(',')).replace(', ', ' e ');
+	
+	// Solução do professor
+	nomesAmigos = nomesAmigos.reduce( function(acumulado, item, index) {
+		return acumulado += (index === (nomesAmigos.length - 1) ? ' e ' : ', ') + item;
+	}).concat( ' são meus amigos.' );
+	
+	console.log( nomesAmigos );
 
 	/*
 	Usando o replace(), faça a string "Roberto" virar "Roberta".
@@ -63,7 +70,11 @@
 	*/
 	console.log( '\nEra "Roberto", agora é:' );
 	var nome = 'Roberto';
-	nome = nome.split('').reverse().join('').replace('o', 'a').split('').reverse().join('');
+	// Minha solução
+	// nome = nome.split('').reverse().join('').replace('o', 'a').split('').reverse().join('');
+	
+	// Solução do Professor
+	nome = nome.replace('to', 'ta');
 	console.log( nome );
 
 	/*
