@@ -104,14 +104,8 @@
 	*/
 	console.log( '\nFazer replace dos textos das tags:' );
 	var tagsComTextos = '<h1>Título da página</h1><p>Este é um parágrafo</p><footer>Rodapé</footer>';
-	var regex = /></g;
-	tagsComTextos = tagsComTextos.replace(regex, '>\n<');
-	console.log( 'tagsComTextos:', tagsComTextos );
+	var regex = /<(\w+)>([^<]+)<\/\w+>/g;
 	
-	regex = /<(\w+)>(.+)<\/\w+>/g;
-	function replaceTagText(match, tagCaptured, textCaptured) {
-		return '<' + tagCaptured + '>O texto dentro da tag "' + tagCaptured + '" é "' + textCaptured + '"</' + tagCaptured + '>';
-	}
-	tagsComTextos = tagsComTextos.replace(regex, replaceTagText);
+	tagsComTextos = tagsComTextos.replace(regex, '<$1>O texto dentro da tag "$1" é "$2"</$1>\n');
 	console.log( tagsComTextos );
 })();
