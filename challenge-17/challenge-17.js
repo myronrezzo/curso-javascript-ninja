@@ -20,7 +20,7 @@
 	no console:
 	*/
 	console.log( 'Adicionando seu nome no texto:' );
-	console.log( text.replace('Manuel Marques de Sousa', 'Myron Jorge Rodrigues Rezzo') );
+	console.log( text.replace(/Manuel Marques de Sousa/, 'Myron Jorge Rodrigues Rezzo') );
 	
 	/*
 	Agora, substitua a palavra "brasileiro" por sua cidade natal e mostre no
@@ -28,21 +28,21 @@
 	Ex: Se você for da São Paulo, substitua por "paulista".
 	*/
 	console.log( '\nTrocando naturalidade:' );
-	console.log( text.replace('brasileiro', 'maranhense') );
+	console.log( text.replace(/brasileiro/, 'maranhense') );
 	
 	/*
 	Substitua todos os números por um traço `-`. Cada caractere de número deve
 	ser um traço. Mostre o resultado no console:
 	*/
 	console.log( '\nTrocando números por -:' );
-	console.log( text.replace(/[0-9]/g, '-') );
+	console.log( text.replace(/\d/g, '-') );
 	
 	/*
 	Substitua todas as letras (somente letras) de "D" maiúsculo até "h"
 	minúsculo por "0" (número zero). Mostre o resultado no console:
 	*/
 	console.log( '\nTrocando de "D" a "h" por "0":' );
-	console.log( text.replace(/[D-Za-h]/g, '0') );
+	console.log( text.replace(/[D-Hd-h]/g, '0') );
 	
 	/*
 	Substitua todos os "A" (maiúsculos ou minúsculos) por "4".
@@ -50,15 +50,23 @@
 	*/
 	console.log( '\nTrocando "A" e "a" por "4":' );
 	console.log( text.replace(/[Aa]/g, '4') );
+	/*
+	Outras formas
+	console.log( text.replace(/A|a/g, '4') );
+	console.log( text.replace(/[a]/gi, '4') );
+	*/
 	
 	/*
 	Substitua a frase "O Centauro de Luvas", deixando-a em caixa alta, usando
 	o método `toUpperCase()`. Mostre o resultado no console:
 	*/
 	console.log( '\n"O Centauro de Luvas" em caixa alta:' );
-	console.log( text.replace(/O Centauro de Luvas/g, function(str) {
+	function upperCase(str) {
 		return str.toUpperCase();
-	}) );
+	}
+	console.log( text.replace(/O Centauro de Luvas/g, upperCase) );
+	
+	// Solução e recomendação do professor é criar a função separada em vez de criá-la diretamente na passagem do argumento.
 	
 	/*
 	Agora iremos substituir as datas no formato "13 de junho de 1804" para
@@ -74,49 +82,22 @@
 	*/
 	console.log( '\nMeses representados por números:' );
 	function getMonthNumber ( monthText ) {
-		var monthNumber = "";
-		switch(monthText.toLowerCase()) {
-			case 'janeiro':
-			monthNumber = "01";
-			break;
-			case 'fevereiro':
-			monthNumber = "02";
-			break;
-			case 'março':
-			monthNumber = "03";
-			break;
-			case 'abril':
-			monthNumber = "04";
-			break;
-			case 'maio':
-			monthNumber = "05";
-			break;
-			case 'junho':
-			monthNumber = "06";
-			break;
-			case 'julho':
-			monthNumber = "07";
-			break;
-			case 'agosto':
-			monthNumber = "08";
-			break;
-			case 'setembro':
-			monthNumber = "09";
-			break;
-			case 'outubro':
-			monthNumber = "10";
-			break;
-			case 'novembro':
-			monthNumber = "11";
-			break;
-			case 'dezembro':
-			monthNumber = "12";
-			break;
-			default:
-			monthNumber = null;
-		}
+		var months = {
+			janeiro: '01',
+			fevereiro: '02',
+			'março': '03',
+			abril: '04',
+			maio: '05',
+			junho: '06',
+			julho:  '07',
+			agosto: '08',
+			setembro: '09',
+			outubro: '10',
+			novembro: '11',
+			dezembro: '12',
+		};
 		
-		return monthNumber;
+		return months[monthText.toLowerCase()];
 	}
 	var mes = 'março';
 	console.log( 'O mês de ' + mes + ' é representado pelo número ' + getMonthNumber( mes ) + '.' );
@@ -134,8 +115,10 @@
 	Mostre a regex no console.
 	*/
 	console.log( '\nRegex que vai fazer o match com as datas do texto:' );
-	var regexDate = /([1-3][0-9]) de (junho|julho) de ([1-2][0-9][0-9][0-9])/g;
+	var regexDate = /(\d\d) de (junho|julho) de (\d\d\d\d)/g;
 	console.log( regexDate );
+	
+	// Solução do professor utilizou termos (\d) em vez de classes (listas) de caracteres ([0-9])
 	
 	/*
 	Agora crie a função que irá fazer o replace dos dados. A função será chamada
@@ -145,12 +128,15 @@
 	console o resultado.
 	*/
 	console.log( '\nReplace de datas:' );
+	function replace(match, dia, mes, ano) {
+		return dia + '/' + getMonthNumber(mes) + '/' + ano;
+	}
 	function replaceDate( textToReplace) {
-		return textToReplace.replace(regexDate, function(match, dia, mes, ano) {
-			return dia + '/' + getMonthNumber(mes) + '/' + ano;
-		});
+		return textToReplace.replace(regexDate, replace);
 	}
 	console.log( replaceDate( text ) );
+	
+	// Solução e recomendação do professor é criar a função separada em vez de criá-la diretamente na passagem do argumento.
 	
 })();
 
