@@ -97,7 +97,7 @@ input;
       visorFinalExpression = visorFinalExpression.replace(nextOperationRegex, doOperation(nextOperationRegex.exec(visorFinalExpression)[0], operator));
     });
 
-    $visor.value = allOperationsFromVisor;
+    $visor.value = visorFinalExpression;
   }
 
   function allOperationsFromVisorArray() {
@@ -108,7 +108,7 @@ input;
   function doOperation(operationString, operator) {
     var calc = {
       '+': function(a, b) { return Number(a) + Number(b); },
-      '-': function(a, b) { console.log('a', a); console.log('b', b); return Number(a) - Number(b); },
+      '-': function(a, b) { return Number(a) - Number(b); },
       '*': function(a, b) { return Number(a) * Number(b); },
       '/': function(a, b) { return Number(a) / Number(b); },
     };
