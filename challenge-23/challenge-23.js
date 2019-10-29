@@ -75,7 +75,7 @@ input;
     return $visor.value === '0';
   }
 
-  function isLastPressedButtonAnOperation() {
+  function isLastButtonPressedAnOperation() {
 
     var lastCharInVisor = $visor.value.split('').pop();
     return operations.some(function(item) {
@@ -84,25 +84,33 @@ input;
   }
 
   function removeLastCharIfItIsAnOperation() {
-    if (isLastPressedButtonAnOperation())
+    if (isLastButtonPressedAnOperation())
       $visor.value = $visor.value.slice(0, -1);
   }
 
   function resolveOperations() {
-    //var allOperationsFromVisor = $visor.value;
-    var visorFinalExpression = $visor.value;
-    var allOperationsToDo = allOperationsFromVisorArray();
+    var finalExpressionFromVisor = $visor.value;
+    var allOperationsToDo = getAllOperationsFromExpression(finalExpressionFromVisor);
+	allOperationsToDo = orderOperationsByPrecedence(allOperationsToDo);
+	console.log('ordem das operações: ', allOperationsToDo);
     allOperationsToDo.forEach( function(operator) {
-      var nextOperationRegex = new RegExp('\\d+\\' + operator + '\\d+', 'g');
-      visorFinalExpression = visorFinalExpression.replace(nextOperationRegex, doOperation(nextOperationRegex.exec(visorFinalExpression)[0], operator));
+      var nextOperationToDoRegex = new RegExp('\\d+\\' + operator + '\\d+');
+	  // console.log('Será aplicado o nextOperationToDoRegex',  nextOperationToDoRegex );
+	  // console.log('sobre o seguinte finalExpressionFromVisor', finalExpressionFromVisor)
+	  
+      finalExpressionFromVisor = finalExpressionFromVisor.replace(nextOperationToDoRegex, doOperation(nextOperationToDoRegex.exec(finalExpressionFromVisor)[0], operator));
     });
 
-    $visor.value = visorFinalExpression;
+    $visor.value = finalExpressionFromVisor;
   }
 
-  function allOperationsFromVisorArray() {
+  function getAllOperationsFromExpression(expression) {
     var totalOperationsCounterRegex = /[+\-*/]/g;
-    return $visor.value.match(totalOperationsCounterRegex);
+    return expression.match(totalOperationsCounterRegex);
+  }
+  
+  function orderOperationsByPrecedence(allOperArr) {
+	  return allOperArr.toString().match(/[\*\/]/g).concat(allOperArr.toString().match(/[\+\-]/g));
   }
 
   function doOperation(operationString, operator) {
@@ -113,11 +121,13 @@ input;
       '/': function(a, b) { return Number(a) / Number(b); },
     };
 
-    /* console.log('operationString', operationString);
-    console.log('operator', operator);
-    console.log('calc[operator]', calc[operator]);
-    console.log('operationString.split(operator)', operationString.split(operator));
-    console.log('calc[operator].apply(operationString.split(operator))', calc[operator].apply(operationString.split(operator))); */
+    // console.log('----------');
+	// console.log('operationString', operationString);
+    // console.log('operator', operator);
+    // console.log('calc[operator]', calc[operator]);
+    // console.log('operationString.split(operator)', operationString.split(operator));
+    // console.log('calc[operator].apply(operationString.split(operator))' + calc[operator].apply(operationString.split(operator)));
+	// console.log('----------');
     return calc[operator].apply(calc, operationString.split(operator));
   }
 
