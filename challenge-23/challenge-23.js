@@ -23,3 +23,102 @@ multiplicação (x), então no input deve aparecer "1+2x".
 input;
 - Ao pressionar o botão "CE", o input deve ficar zerado.
 */
+
+(function(win, doc) {
+  'use strict';
+
+  var operations = ['+', '-', '*', '/'];
+  var $visor = doc.querySelector('[data-js="txtDisplay"]');
+  var $numbersButtons = doc.querySelectorAll('[data-js="numberButton"]');
+  var $operationsButtons = doc.querySelectorAll('[data-js="operationButton"]');
+  var $equalButton = doc.querySelector('[data-js="equalButton"]');
+  var $ceButton = doc.querySelector('[data-js="ceButton"]');
+
+  Array.prototype.forEach.call($numbersButtons, function(numButton) {
+    numButton.addEventListener('click', handleNumberButtonClick, false);
+  });
+
+  Array.prototype.forEach.call($operationsButtons, function(operButton) {
+    operButton.addEventListener('click', handleOperationButtonClick, false);
+  });
+
+  $equalButton.addEventListener('click', handleEqualButtonClick, false);
+
+  $ceButton.addEventListener('click', handleCEButtonClick, false);
+
+
+
+  function handleNumberButtonClick() {
+    $visor.value = !visorHasOnlyZero() ? $visor.value + this.value : this.value;
+  }
+
+  function handleOperationButtonClick() {
+
+    if (visorHasOnlyZero())
+      return;
+
+    removeLastCharIfItIsAnOperation();
+    $visor.value += this.value;
+  }
+
+  function handleEqualButtonClick() {
+    removeLastCharIfItIsAnOperation();
+    resolveOperations();
+  }
+
+  function handleCEButtonClick() {
+    $visor.value = 0;
+  }
+
+
+  function visorHasOnlyZero() {
+    return $visor.value === '0';
+  }
+
+  function isLastPressedButtonAnOperation() {
+
+    var lastCharInVisor = $visor.value.split('').pop();
+    return operations.some(function(item) {
+      return item === lastCharInVisor;
+    });
+  }
+
+  function removeLastCharIfItIsAnOperation() {
+    if (isLastPressedButtonAnOperation())
+      $visor.value = $visor.value.slice(0, -1);
+  }
+
+  function resolveOperations() {
+    //var allOperationsFromVisor = $visor.value;
+    var visorFinalExpression = $visor.value;
+    var allOperationsToDo = allOperationsFromVisorArray();
+    allOperationsToDo.forEach( function(operator) {
+      var nextOperationRegex = new RegExp('\\d+\\' + operator + '\\d+', 'g');
+      visorFinalExpression = visorFinalExpression.replace(nextOperationRegex, doOperation(nextOperationRegex.exec(visorFinalExpression)[0], operator));
+    });
+
+    $visor.value = allOperationsFromVisor;
+  }
+
+  function allOperationsFromVisorArray() {
+    var totalOperationsCounterRegex = /[+\-*/]/g;
+    return $visor.value.match(totalOperationsCounterRegex);
+  }
+
+  function doOperation(operationString, operator) {
+    var calc = {
+      '+': function(a, b) { return Number(a) + Number(b); },
+      '-': function(a, b) { console.log('a', a); console.log('b', b); return Number(a) - Number(b); },
+      '*': function(a, b) { return Number(a) * Number(b); },
+      '/': function(a, b) { return Number(a) / Number(b); },
+    };
+
+    /* console.log('operationString', operationString);
+    console.log('operator', operator);
+    console.log('calc[operator]', calc[operator]);
+    console.log('operationString.split(operator)', operationString.split(operator));
+    console.log('calc[operator].apply(operationString.split(operator))', calc[operator].apply(operationString.split(operator))); */
+    return calc[operator].apply(calc, operationString.split(operator));
+  }
+
+})(window, document);
