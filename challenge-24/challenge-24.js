@@ -27,26 +27,31 @@ input;
 (function(win, doc) {
   'use strict';
 
-  var operations = ['+', '-', '*', '/'];
+  var operations = [];
   var $visor = doc.querySelector('[data-js="txtDisplay"]');
   var $numbersButtons = doc.querySelectorAll('[data-js="numberButton"]');
   var $operationsButtons = doc.querySelectorAll('[data-js="operationButton"]');
   var $equalButton = doc.querySelector('[data-js="equalButton"]');
   var $ceButton = doc.querySelector('[data-js="ceButton"]');
 
-  Array.prototype.forEach.call($numbersButtons, function(numButton) {
-    numButton.addEventListener('click', handleNumberButtonClick, false);
-  });
+  function initialization() {
+    attachEventsListeners();
+  }
 
-  Array.prototype.forEach.call($operationsButtons, function(operButton) {
-    operButton.addEventListener('click', handleOperationButtonClick, false);
-  });
+  function attachEventsListeners() {
+    Array.prototype.forEach.call($numbersButtons, function(numButton) {
+      numButton.addEventListener('click', handleNumberButtonClick, false);
+    });
 
-  $equalButton.addEventListener('click', handleEqualButtonClick, false);
+    Array.prototype.forEach.call($operationsButtons, function(operButton) {
+      operButton.addEventListener('click', handleOperationButtonClick, false);
+      operations.push(operButton.value);
+    });
 
-  $ceButton.addEventListener('click', handleCEButtonClick, false);
+    $equalButton.addEventListener('click', handleEqualButtonClick, false);
 
-
+    $ceButton.addEventListener('click', handleCEButtonClick, false);
+  }
 
   function handleNumberButtonClick() {
     $visor.value = !visorHasOnlyZero() ? $visor.value + this.value : this.value;
@@ -70,7 +75,6 @@ input;
     $visor.value = 0;
   }
 
-
   function visorHasOnlyZero() {
     return $visor.value === '0';
   }
@@ -91,22 +95,31 @@ input;
   function resolveOperations() {
     var finalExpressionFromVisor = $visor.value;
     var allOperationsToDo = getAllOperationsFromExpression(finalExpressionFromVisor);
-    allOperationsToDo = orderOperationsByPrecedence(allOperationsToDo);
-    allOperationsToDo.forEach( function(operator) {
-      var nextOperationToDoRegex = new RegExp('\\d+\\' + operator + '\\d+');
-      finalExpressionFromVisor = finalExpressionFromVisor.replace(nextOperationToDoRegex, doOperation(nextOperationToDoRegex.exec(finalExpressionFromVisor)[0], operator));
-    });
+
+    if (allOperationsToDo !== null) {
+      allOperationsToDo = orderOperationsByPrecedence(allOperationsToDo);
+      allOperationsToDo.forEach( function(operator) {
+        var nextOperationToDoRegex = new RegExp('\\d+\\' + operator + '\\d+');
+        var operationDoneString = doOperation(nextOperationToDoRegex.exec(finalExpressionFromVisor)[0], operator);
+
+        //finalExpressionFromVisor = finalExpressionFromVisor.replace(nextOperationToDoRegex, doOperation(nextOperationToDoRegex.exec(finalExpressionFromVisor)[0], operator));
+        finalExpressionFromVisor = finalExpressionFromVisor.replace(nextOperationToDoRegex, operationDoneString);
+      });
+    }
 
     $visor.value = finalExpressionFromVisor;
   }
 
   function getAllOperationsFromExpression(expression) {
-    var totalOperationsCounterRegex = /[+\-*/]/g;
+    //var totalOperationsCounterRegex = /[+\-*/]/g;
+    var totalOperationsCounterRegex = new RegExp('[' + operations.join('\\') + ']', 'g');
     return expression.match(totalOperationsCounterRegex);
   }
 
   function orderOperationsByPrecedence(allOperArr) {
-	  return (allOperArr.toString().match(/[\*\/]/g)||[]).concat(allOperArr.toString().match(/[\+\-]/g));
+    var multiplicationDivisionRegex = /[*/]/g;
+    var additionSubtractionRegex = /[+-]/g;
+	  return (allOperArr.toString().match(multiplicationDivisionRegex)||[]).concat((allOperArr.toString().match(additionSubtractionRegex)||[]));
   }
 
   function doOperation(operationString, operator) {
@@ -120,4 +133,5 @@ input;
     return calc[operator].apply(calc, operationString.split(operator));
   }
 
+initialization();
 })(window, document);
