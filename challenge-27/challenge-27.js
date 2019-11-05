@@ -51,12 +51,12 @@
       return this.element;
     };
 
-    this.forEach = function(callback, thisArgs) {
-      Array.prototype.forEach.call(this.element, callback, thisArgs);
+    this.forEach = function() {
+      Array.prototype.forEach.apply(this.element, arguments);
     };
 
-    this.map = function(callback, thisArgs) {
-      return Array.prototype.map.call(this.element, callback, thisArgs);
+    this.map = function() {
+      return Array.prototype.map.apply(this.element, arguments);
     };
 
     this.filter = function(callback, thisArgs) {
@@ -140,18 +140,22 @@
     return item;
   }));
 
-  var meuArray = [1, 2, 3];
-  console.log('meuArray é do tipo Array?', DOM.isArray(meuArray));
-  var meuObjeto = {};
-  console.log('meuObjeto é do tipo Object?', DOM.isObject(meuArray));
-  var meuArray = [1, 2, 3]
-  console.log('meuArray é do tipo Array?', DOM.isArray(meuArray));
-  var meuArray = [1, 2, 3]
-  console.log('meuArray é do tipo Array?', DOM.isArray(meuArray));
-  var meuArray = [1, 2, 3]
-  console.log('meuArray é do tipo Array?', DOM.isArray(meuArray));
-  var meuArray = [1, 2, 3]
-  console.log('meuArray é do tipo Array?', DOM.isArray(meuArray));
+  var myArray = [1, 2, 3];
+  console.log('myArray é do tipo Array?', DOM.isArray(myArray));
+  var myObject = {};
+  console.log('myObject é do tipo Object?', DOM.isObject(myObject));
+  var myFunction = function(){};
+  console.log('myFunction é do tipo Function?', DOM.isFunction(myFunction));
+  var myNumber = 12;
+  console.log('myNumber é do tipo Number?', DOM.isNumber(myNumber));
+  var myString = "String"
+  console.log('myString é do tipo String?', DOM.isString(myString));
+  var myBoolean = false;
+  console.log('myBoolean é do tipo Boolean?', DOM.isBoolean(myBoolean));
+  var myNull = null;
+  console.log('myNull é do tipo Null?', DOM.isNull(myNull));
+  var myUndefined = undefined;
+  console.log('myUndefined é do tipo Undefined?', DOM.isNull(myUndefined));
 
 
 
